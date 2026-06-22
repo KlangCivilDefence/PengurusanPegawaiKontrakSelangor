@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Borang Kerja Lebih Masa</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    margin: 8px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 4px 6px;
+    text-align: center;
+  }
+
+  /* HEADER BORANG ATAS */
+  .kepala-borang {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  .kepala-borang th {
+    border: none;
+    text-align: center;
+    padding: 2px 0;
+  }
+
+  /* TABLE MAKLUMAT PEGAWAI DI ATAS JADUAL */
+  .info-table {
+    width: 100%;
+    font-size: 12px;
+    border-collapse: collapse;
+    margin-bottom: 1px;
+  }
+  .info-table td {
+    border: none;
+    padding: 1px 1px;
+    vertical-align: top;
+  }
+  .info-table .label {
+    white-space: nowrap;
+    font-weight: normal;
+    text-align: left;
+  }
+  .info-table .colon {
+    width: 10px;
+  }
+  .info-table .value {
+    padding-right: 12px;
+    text-align: left;
+  }
+
+  /* WRAP UNTUK TABLE + ACTION ICON */
+  .table-wrap {
+    position: relative;
+    display: inline-block; /* untuk paparan skrin */
+  }
+
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal {
+    background: #fff;
+    padding: 18px;
+    border-radius: 8px;
+    width: 380px;
+    font-size: 13px;
+  }
+  .modal label {
+    font-weight: bold;
+    display: block;
+    margin-top: 8px;
+  }
+  .modal input, select {
+    width: 100%;
+    padding: 4px;
+    margin-top: 3px;
+    box-sizing: border-box;
+  }
+  button{
+    padding: 6px 14px;
+    background: #1c4e80;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    margin: 4px;
+  }
+  button:hover { background: #163a60; }
+
+  /* ICON EDIT/COPY/DELETE DI LUAR TABLE */
+  .row-action {
+    position: absolute;
+    left: 100%;
+    margin-left: 6px;
+    display: flex;
+    gap: 4px;
+    transform: translateY(-50%);
+  }
+
+  .row-action button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 16px;
+    line-height: 24px;
+    background: transparent;
+    color: #333;
+    cursor: pointer;
+    border: none;
+  }
+
+  .row-action button.edit   { color: #1c7c2c; }   /* hijau */
+  .row-action button.copy   { color: #0066ff; }   /* biru */
+  .row-action button.delete { color: #b00020; }   /* merah */
+
+  /* KAKI BORANG (nota bawah jadual) */
+  .kaki-borang {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    margin-top: 6px;
+  }
+  .kaki-borang td {
+    border: none;
+    text-align: left;
+    padding: 2px 4px;
+  }
+
+  /* FLOATING TOP BAR */
+  #topBar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #0b1020;
+    color: #e5e7eb;
+    padding: 6px 8px;
+    margin: -8px -8px 6px -8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1f2937;
+  }
+  #topBar span {
+    font-size: 12px;
+  }
+  #topBar-rujukan {
+    font-weight: bold;
+    color: #bfdbfe;
+  }
+  #topBar button {
+    margin: 0 0 0 6px;
+  }
+  #btnBack {
+    background: #6b7280;
+  }
+  #btnBack:hover {
+    background: #4b5563;
+  }
+
+  /* === SEKSYEN 2 & 3: KONTEKS === */
+  .section-slip,
+  .section-perakuan {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+
+  .section-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 8px 0 4px 0;
+  }
+
+  /* SLIP KIRAAN (borderless) */
+  .slip-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    font-size: 11px;
+  }
+  .slip-table th,
+  .slip-table td {
+    border: none;
+    padding: 4px 5px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .slip-table th.center,
+  .slip-table td.center {
+    text-align: center;
+  }
+  .slip-subtitle {
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 2px;
+  }
+
+  .slip-summary {
+    width: 50%;
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .slip-summary td {
+    border: none;
+    padding: 2px 4px;
+  }
+  .slip-summary td.label {
+    text-align: left;
+    width: 60%;
+  }
+  .slip-summary td.value {
+    text-align: left;
+    width: 40%;
+  }
+
+  .underline {
+    border-bottom: 1px solid #000;
+  }
+
+  /* === SEKSYEN 3: PERAKUAN & PENGESAHAN === */
+  .perakuan-block {
+    margin-top: 18px;
+    font-size: 11px;
+  }
+  .perakuan-block p {
+    text-align: justify;
+    margin: 4px 0 8px 0;
+  }
+  .perakuan-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .perakuan-tarikh {
+    margin-top: 6px;
+  }
+  .perakuan-tarikh span {
+    display: inline-block;
+    min-width: 120px;
+    border-bottom: 1px solid #000;
+    text-align: center;
+  }
+
+  .signature-area {
+    margin-top: 16px;
+    text-align: right;
+    font-size: 11px;
+  }
+  .signature-line {
+    display: inline-block;
+    min-width: 220px;
+    border-top: 1px solid #000;
+    margin-bottom: 3px;
+  }
+  .signature-name {
+    text-align: right;
+    font-size: 11px;
+  }
+
+  /* HEADER SLIP & PERAKUAN (borderless) */
+  .kepala-section-slip,
+  .kepala-section-perakuan {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 20px;
+    margin-bottom: 4px;
+    border: none;
+  }
+  .kepala-section-slip th,
+  .kepala-section-slip td,
+  .kepala-section-perakuan th,
+  .kepala-section-perakuan td {
+    border: none !important;
+    text-align: center;
+    padding: 2px 0;
+  }
+
+  /* --- PRINT SETTING: SEBANYAK MUNGKIN ROW DI PAGE 1 --- */
+  @media print {
+    /* Buang butang & popup semasa print */
+    .row-action,
+    .modal-bg,
+    button,
+    #topBar {
+      display: none !important;
+    }
+
+    body {
+      margin: 5mm;
+    }
+
+    table {
+      font-size: 10px;
+    }
+
+    th, td {
+      padding: 2px 3px;
+    }
+
+    /* Info table rapat dengan OT */
+    .info-table {
+      margin-bottom: 0;
+    }
+
+    /* Wrapper jadual OT boleh dipecahkan */
+    .table-wrap {
+      display: block;
+      position: relative;
+    }
+
+    /* Header jadual OT diulang bila page break */
+    #jadualTable thead {
+      display: table-header-group;
+    }
+
+    /* Setiap row OT & row JUMLAH jangan pecah tengah-tengah */
+    #bodyData tr,
+    #footerRow {
+      page-break-inside: avoid;
+    }
+
+    /* Force this table footer to repeat on every page */
+    #printFooter {
+      display: table !important;
+      width: 100%;
+    }
+
+    #printFooter tfoot {
+      display: table-footer-group !important;
+    }
+
+    /* Prevent other elements from printing as footers */
+    body, html {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Saiz & align kolum Keterangan Tugas */
+    td:nth-child(15) {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      max-width: 250px !important;
+      text
+    }
+
+    #printFooter {
+      display: table-footer-group !important;
+    }
+
+    /* Remove kotak on footer */
+    #printFooter td,
+    #printFooter th {
+      border: none !important;
+      background: transparent !important;
+    }
+
+    /* OPTIONAL: remove padding to make footer smaller */
+    #printFooter td {
+      padding: 1px 2px !important;
+    }
+
+    /* Page break untuk seksyen 2 & 3:
+       Kita gunakan header slip/perakuan sebagai permulaan muka baru */
+    .section-slip {
+      page-break-before: none;
+    }
+    .section-perakuan {
+      page-break-before: none;
+    }
+
+    .kepala-section-slip {
+      border: none !important;
+      page-break-before: always;
+    }
+    .kepala-section-perakuan {
+      border: none !important;
+      page-break-before: always;
+    }
+
+    /* Pastikan th/td di header slip & perakuan kekal tanpa border di print */
+    .kepala-section-slip th,
+    .kepala-section-slip td,
+    .kepala-section-perakuan th,
+    .kepala-section-perakuan td {
+      border: none !important;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- FLOATING TOP BAR -->
+<div id="topBar">
+  <div>
+    <span>No. Rujukan:</span>
+    <span id="topBar-rujukan">-</span>
+  </div>
+  <div>
+    <button id="btnBack">Kembali ke Senarai OT</button>
+    <button id="btnSave">Simpan</button>
+  </div>
+</div>
+
+<!-- HEADER BORANG – SEKSYEN 1 -->
+<table class="kepala-borang">
+  <tr><th colspan="15">PENYATA TUNTUTAN ELAUN LEBIH MASA</th></tr>
+  <tr><th colspan="15" id="tajukBulan">BAGI BULAN :</th></tr>
+</table>
+
+<!-- MAKLUMAT PEGAWAI DI ATAS JADUAL -->
+<table class="info-table">
+  <tr>
+    <td class="label">No. Rujukan Permohonan</td><td class="colon">:</td>
+    <td class="value" id="infoNoRujukan">-</td>
+
+    <td class="label">No. K/P</td><td class="colon">:</td>
+    <td class="value" id="infoNoKp">-</td>
+
+    <td class="label">Gaji Asas</td><td class="colon">:</td>
+    <td class="value" id="infoGajiAsas">-</td>
+  </tr>
+  <tr>
+    <td class="label">Nama</td><td class="colon">:</td>
+    <td class="value" id="infoNama">-</td>
+
+    <td class="label">No. Gaji</td><td class="colon">:</td>
+    <td class="value" id="infoNoGaji">-</td>
+
+    <td class="label">Unit Organisasi</td><td class="colon">:</td>
+    <td class="value" id="infoUnitOrganisasi">-</td>
+  </tr>
+  <tr>
+    <td class="label">Jawatan</td><td class="colon">:</td>
+    <td class="value" id="infoJawatan">-</td>
+
+    <td class="label">Bank</td><td class="colon">:</td>
+    <td class="value" id="infoBank">-</td>
+
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+  </tr>
+  <tr>
+    <td class="label">Gred Gaji</td><td class="colon">:</td>
+    <td class="value" id="infoGredGaji">-</td>
+
+    <td class="label">No. Akaun</td><td class="colon">:</td>
+    <td class="value" id="infoNoAkaun">-</td>
+
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+  </tr>
+  <tr>
+    <td class="label">Status Lantikan</td><td class="colon">:</td>
+    <td class="value" id="infoStatusLantikan">-</td>
+
+    <td class="label">Jenis Waktu Kerja</td><td class="colon">:</td>
+    <td class="value" id="infoJenisWaktuKerja">-</td>
+
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+  </tr>
+  <tr>
+    <td class="label">Tanggung Kerja</td><td class="colon">:</td>
+    <td class="value" id="infoTanggungKerja">-</td>
+
+    <td class="label">No. Telefon</td><td class="colon">:</td>
+    <td class="value" id="infoNoTelefon">-</td>
+
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+  </tr>
+  <tr>
+    <td class="label">Emel</td><td class="colon">:</td>
+    <td class="value" id="infoEmel">-</td>
+
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+    <td class="label"></td><td class="colon"></td><td class="value"></td>
+  </tr>
+</table>
+
+<!-- SEKSYEN 1: JADUAL OT -->
+<div class="table-wrap" id="tableWrap">
+  <table id="jadualTable">
+    <thead>
+      <tr>
+        <th rowspan="3">BIL</th>
+        <th rowspan="3">HARI</th>
+        <th rowspan="3">TARIKH</th>
+        <th colspan="2" rowspan="2">WAKTU BEKERJA RASMI</th>
+        <th colspan="2" rowspan="2">WAKTU BEKERJA LEBIH MASA BIASA</th>
+        <th colspan="7">JUMLAH JAM</th>
+        <th rowspan="3">KETERANGAN TUGAS</th>
+      </tr>
+      <tr>
+        <th>JUMLAH</th>
+        <th colspan="2">HARI BEKERJA BIASA</th>
+        <th colspan="2">HARI REHAT</th>
+        <th colspan="2">HARI KELEPASAN AM</th>
+      </tr>
+      <tr>
+        <th>DARI</th>
+        <th>HINGGA</th>
+        <th>DARI</th>
+        <th>HINGGA</th>
+        <th>JAM</th>
+        <th>SIANG</th>
+        <th>MALAM</th>
+        <th>SIANG</th>
+        <th>MALAM</th>
+        <th>SIANG</th>
+        <th>MALAM</th>
+      </tr>
+    </thead>
+
+    <tbody id="bodyData"></tbody>
+
+    <!-- JUMLAH: sekali sahaja di hujung jadual -->
+    <tbody id="footerBody">
+      <tr id="footerRow">
+        <th colspan="7">JUMLAH BESAR</th>
+        <th id="totJam"></th>
+        <th id="totA_s"></th>
+        <th id="totA_m"></th>
+        <th id="totB_s"></th>
+        <th id="totB_m"></th>
+        <th id="totC_s"></th>
+        <th id="totC_m"></th>
+        <th></th>
+      </tr>
+    </tbody>
+
+    <tfoot id="printFooter">
+      <tr>
+        <td colspan="4">Sumber : Pangkalan Data HRMIS</td>
+        <td colspan="8">Surat ini dikeluarkan secara elektronik dan tiada tandatangan diperlukan.</td>
+        <td colspan="3" id="tarikhPenjanaan"></td>
+      </tr>
+    </tfoot>
+
+  </table>
+</div>
+
+<div style="text-align:left;margin-top:10px;">
+  <button onclick="openAddMode()">+ Tambah Senarai KLM</button>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SEKSYEN 2: SLIP KIRAAN ELAUN LEBIH MASA (Muka surat 2)               -->
+<!-- ===================================================================== -->
+
+<table class="kepala-section-slip">
+  <tr><th>PENYATA TUNTUTAN ELAUN LEBIH MASA</th></tr>
+  <tr><th id="tajukBulan2">BAGI BULAN :</th></tr>
+</table>
+
+<div class="section-slip">
+  <div class="section-title">Perkiraan Elaun Lebih Masa</div>
+
+  <div class="slip-subtitle">Hari Bekerja Biasa</div>
+  <table class="slip-table">
+    <thead>
+      <tr>
+        <th class="center">Waktu</th>
+        <th class="center">Gaji</th>
+        <th>Formula Kadar Sejam</th>
+        <th class="center">Kadar Gandaan</th>
+        <th class="center">Kadar Sejam</th>
+        <th class="center">Jumlah Jam</th>
+        <th class="center">Jumlah (RM)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Siang</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">1 1/8</td>
+        <td class="center" id="rate_A_s">RM0.00</td>
+        <td class="center" id="jam_A_s">0 Jam 0 Minit</td>
+        <td class="center" id="amt_A_s">RM0.00</td>
+      </tr>
+      <tr>
+        <td>Malam</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">1 1/4</td>
+        <td class="center" id="rate_A_m">RM0.00</td>
+        <td class="center" id="jam_A_m">0 Jam 0 Minit</td>
+        <td class="center" id="amt_A_m">RM0.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="slip-subtitle">Hari Rehat</div>
+  <table class="slip-table">
+    <thead>
+      <tr>
+        <th class="center">Waktu</th>
+        <th class="center">Gaji</th>
+        <th>Formula Kadar Sejam</th>
+        <th class="center">Kadar Gandaan</th>
+        <th class="center">Kadar Sejam</th>
+        <th class="center">Jumlah Jam</th>
+        <th class="center">Jumlah (RM)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Siang</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">1 1/4</td>
+        <td class="center" id="rate_B_s">RM0.00</td>
+        <td class="center" id="jam_B_s">0 Jam 0 Minit</td>
+        <td class="center" id="amt_B_s">RM0.00</td>
+      </tr>
+      <tr>
+        <td>Malam</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">1 1/2</td>
+        <td class="center" id="rate_B_m">RM0.00</td>
+        <td class="center" id="jam_B_m">0 Jam 0 Minit</td>
+        <td class="center" id="amt_B_m">RM0.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="slip-subtitle">Hari Kelepasan Am</div>
+  <table class="slip-table">
+    <thead>
+      <tr>
+        <th class="center">Waktu</th>
+        <th class="center">Gaji</th>
+        <th>Formula Kadar Sejam</th>
+        <th class="center">Kadar Gandaan</th>
+        <th class="center">Kadar Sejam</th>
+        <th class="center">Jumlah Jam</th>
+        <th class="center">Jumlah (RM)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Siang</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">1 3/4</td>
+        <td class="center" id="rate_C_s">RM0.00</td>
+        <td class="center" id="jam_C_s">0 Jam 0 Minit</td>
+        <td class="center" id="amt_C_s">RM0.00</td>
+      </tr>
+      <tr>
+        <td>Malam</td>
+        <td class="center slipGajiAsas">-</td>
+        <td>((Gaji Pokok × 12)/(313 × 8)) × Kadar Gandaan</td>
+        <td class="center">2</td>
+        <td class="center" id="rate_C_m">RM0.00</td>
+        <td class="center" id="jam_C_m">0 Jam 0 Minit</td>
+        <td class="center" id="amt_C_m">RM0.00</td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td>
+        <td class="center"><strong>JUMLAH</strong></td>
+        <td class="center" id="slipJumlahSemua"><strong>RM0.00</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="slip-summary">
+    <tr>
+      <td class="label">Gaji</td>
+      <td class="value" id="slipGaji">RM0.00</td>
+    </tr>
+    <tr>
+      <td class="label">Amaun 1/3 Gaji</td>
+      <td class="value" id="slipSatuPertiga">RM0.00</td>
+    </tr>
+    <tr>
+      <td class="label">Amaun 2/3 Gaji</td>
+      <td class="value" id="slipDuaPertiga">RM0.00</td>
+    </tr>
+    <tr>
+      <td class="label">Amaun yang Diluluskan</td>
+      <td class="value">RM0.00</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SEKSYEN 3: PERAKUAN & PENGESAHAN (Muka surat 3)                       -->
+<!-- ===================================================================== -->
+
+<table class="kepala-section-perakuan">
+  <tr><th>PENYATA TUNTUTAN ELAUN LEBIH MASA</th></tr>
+  <tr><th id="tajukBulan3">BAGI BULAN :</th></tr>
+</table>
+
+<div class="section-perakuan">
+
+  <!-- PERAKUAN PENUNTUT -->
+  <div class="perakuan-block">
+    <div class="perakuan-label">PERAKUAN</div>
+    <p>
+      Dengan ini saya mengaku bahawa selain daripada melaksanakan tugas pada waktu kerja biasa,
+      saya juga telah diarahkan bertugas di luar waktu kerja biasa seperti yang diperincikan di
+      dalam penyata ini, dan kerja-kerja tersebut tidak diganti dengan cuti rehat atau "BOOK OFF".
+      Semua butiran yang dinyatakan adalah benar setakat pengetahuan saya.
+    </p>
+    <div class="perakuan-tarikh">
+      Tarikh : ................................................
+    </div>
+    <div class="signature-area">
+      <div class="signature-line"></div><br>
+      <div class="signature-name" >Tandatangan Penuntut</div>
+      (<span id="perakuanNama">................................</span>)
+    </div>
+  </div>
+
+  <!-- PERAKUAN KETUA JABATAN -->
+  <div class="perakuan-block">
+    <div class="perakuan-label">PERAKUAN KETUA JABATAN</div>
+    <p>
+      Diakui bahawa kerja-kerja lebih masa yang dinyatakan perlu dilaksanakan di luar waktu kerja
+      biasa dan tidak boleh digantikan dengan "BOOK OFF". Pelaksanaan kerja-kerja ini adalah
+      mengikut keperluan perkhidmatan dan mematuhi syarat-syarat serta peraturan yang sedang
+      berkuat kuasa.
+    </p>
+    <div class="perakuan-tarikh">
+      Tarikh : ................................................
+    </div>
+    <div class="signature-area">
+      <div class="signature-line"></div><br>
+      <div class="signature-name">
+        b.p. Ketua Pengarah Perkhidmatan Awam, Malaysia
+      </div>
+    </div>
+  </div>
+
+  <!-- PENGESAHAN KETUA JABATAN -->
+  <div class="perakuan-block">
+    <div class="perakuan-label">PENGESAHAN KETUA JABATAN</div>
+    <p>
+      Diakui bahawa tuntutan Elaun Lebih Masa yang melebihi satu pertiga (1/3) daripada gaji bulanan
+      pekerja adalah dibuat dan disemak mengikut syarat-syarat yang ditetapkan dalam peraturan
+      kewangan dan pekeliling yang berkuat kuasa.
+    </p>
+    <div class="perakuan-tarikh">
+      Tarikh : ................................................
+    </div>
+    <div class="signature-area">
+      <div class="signature-line"></div><br>
+      <div class="signature-name">
+        b.p. Ketua Pengarah Perkhidmatan Awam, Malaysia
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= MODAL INPUT BARIS OT ======================== -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Tambah Rekod</h3>
+
+    <label>Tarikh</label>
+    <input type="date" id="tarikh" onchange="autoHari()">
+
+    <label>Hari</label>
+    <input type="text" id="hari" readonly>
+
+    <label>Waktu Rasmi (Dari)</label>
+    <input type="time" id="wRasmiDari">
+
+    <label>Waktu Rasmi (Hingga)</label>
+    <input type="time" id="wRasmiHingga">
+
+    <label>OT (Dari)</label>
+    <input type="time" id="otDari">
+
+    <label>OT (Hingga)</label>
+    <input type="time" id="otHingga">
+
+    <label>Kategori</label>
+    <select id="kategori">
+      <option value="A">Hari Bekerja Biasa</option>
+      <option value="B">Hari Rehat</option>
+      <option value="C">Hari Kelepasan Am</option>
+    </select>
+
+    <label>Keterangan Tugas</label>
+    <input type="text" id="keterangan">
+
+    <div style="margin-top:12px;text-align:right;">
+      <button onclick="confirmData()">Simpan</button>
+      <button onclick="closeModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========= CONFIG ========= */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4Gsy9l0Uw8cX2pBBXECoWySZcRCT60Sq4rxfQYXyLUVlMLfqKVMlqWq1fOc6MhWTG/exec";
+
+const urlParams = new URLSearchParams(window.location.search);
+const noRujukanOT = urlParams.get("ref") || "";
+
+let rowCount = 0;
+let editRowIndex = null;
+let isDirty = false;
+
+const hariMap = ["AHAD","ISNIN","SELASA","RABU","KHAMIS","JUMAAT","SABTU"];
+
+/* ========= UTIL AUTH ========= */
+function clearAuth() {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("authUser");
+}
+function redirectToLogin() {
+  window.location.href = "login.html";
+}
+
+/* ========= MODAL & ROW OPS ========= */
+
+function markDirty() { isDirty = true; }
+
+function openAddMode(){
+  editRowIndex = null;
+  clearModalFields();
+  document.getElementById("modalTitle").innerText="Tambah Rekod";
+  openModal();
+}
+
+function openEditMode(idx){
+  editRowIndex = idx;
+
+  let row = document.querySelectorAll("#bodyData tr")[idx];
+  let cell = row.children;
+
+  document.getElementById("modalTitle").innerText="Edit Rekod";
+
+  document.getElementById("hari").value    = cell[1].textContent;
+  document.getElementById("tarikh").value  = formatToISO(cell[2].textContent);
+  document.getElementById("wRasmiDari").value = cell[3].textContent;
+  document.getElementById("wRasmiHingga").value = cell[4].textContent;
+  document.getElementById("otDari").value  = cell[5].textContent;
+  document.getElementById("otHingga").value= cell[6].textContent;
+  document.getElementById("keterangan").value  = cell[14].textContent;
+
+  let kat="";
+  if(cell[8].textContent!="" || cell[9].textContent!="") kat="A";
+  if(cell[10].textContent!=""|| cell[11].textContent!="") kat="B";
+  if(cell[12].textContent!=""|| cell[13].textContent!="") kat="C";
+  document.getElementById("kategori").value=kat;
+
+  openModal();
+}
+
+function formatToISO(d){
+  if(!d) return "";
+  let [dd,mm,yy]=d.split("/");
+  return `${yy}-${mm}-${dd}`;
+}
+
+function openModal(){ document.getElementById("modalBg").style.display="flex"; }
+function closeModal(){ document.getElementById("modalBg").style.display="none"; }
+function clearModalFields(){
+  document.querySelectorAll(".modal input").forEach(i=>i.value="");
+  document.getElementById("kategori").value = "A";
+}
+
+function autoHari(){
+  let d = new Date(document.getElementById("tarikh").value);
+  if(!isNaN(d)) document.getElementById("hari").value = hariMap[d.getDay()];
+}
+
+function timeToMin(t){
+  if(!t) return 0;
+  let [h,m] = t.split(":");
+  return (+h)*60+(+m);
+}
+
+// split hour logic OT (siang/malam)
+function calcSplit(otD, otH){
+  let s = timeToMin(otD);
+  let e = timeToMin(otH);
+  if(e<s) e+=1440;
+  let totalMin=e-s;
+
+  let siang=0, malam=0;
+  const dayStart=360, dayEnd=1320; // 06:00–22:00
+
+  for(let i=0;i<totalMin;i++){
+    let cur=(s+i)%1440;
+    if(cur>=dayStart && cur<dayEnd) siang++;
+    else malam++;
+  }
+
+  return{
+    total:(totalMin/60).toFixed(2),
+    siang:(siang/60).toFixed(2),
+    malam:(malam/60).toFixed(2)
+  }
+}
+
+function confirmData(){
+  let tarikh = document.getElementById("tarikh").value;
+  let hari   = document.getElementById("hari").value;
+  let RasD = document.getElementById("wRasmiDari").value;
+  let RasH = document.getElementById("wRasmiHingga").value;
+  let OTD  = document.getElementById("otDari").value;
+  let OTH  = document.getElementById("otHingga").value;
+  let kat  = document.getElementById("kategori").value;
+  let ket  = document.getElementById("keterangan").value;
+
+  if (!tarikh || !hari || !OTD || !OTH) {
+    alert("Sila lengkapkan tarikh, hari dan waktu OT.");
+    return;
+  }
+
+  let {total,siang,malam}=calcSplit(OTD,OTH);
+
+  let cA_s="", cA_m="", cB_s="", cB_m="", cC_s="", cC_m="";
+
+  if(kat=="A"){cA_s=siang;cA_m=malam;}
+  if(kat=="B"){cB_s=siang;cB_m=malam;}
+  if(kat=="C"){cC_s=siang;cC_m=malam;}
+
+  if(editRowIndex===null){
+    addNewRow(tarikh,hari,RasD,RasH,OTD,OTH,total,cA_s,cA_m,cB_s,cB_m,cC_s,cC_m,ket);
+  } else {
+    updateRow(editRowIndex,tarikh,hari,RasD,RasH,OTD,OTH,total,cA_s,cA_m,cB_s,cB_m,cC_s,cC_m,ket);
+  }
+
+  closeModal();
+}
+
+function addNewRow(t,h,RD,RH,OD,OH,tot,A_s,A_m,B_s,B_m,C_s,C_m,ket){
+  rowCount++;
+  let tb=document.getElementById("bodyData");
+
+  let tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${rowCount}</td>
+    <td>${h}</td>
+    <td>${t ? new Date(t).toLocaleDateString('en-GB') : ""}</td>
+    <td>${RD}</td>
+    <td>${RH}</td>
+    <td>${OD}</td>
+    <td>${OH}</td>
+    <td>${tot}</td>
+    <td>${A_s}</td>
+    <td>${A_m}</td>
+    <td>${B_s}</td>
+    <td>${B_m}</td>
+    <td>${C_s}</td>
+    <td>${C_m}</td>
+    <td>${ket}</td>
+  `;
+  tb.appendChild(tr);
+
+  createRowAction(rowCount-1);
+  updateRowActionPositions();
+  updateHeaderFromFirstRow();
+  updateTotals();
+  markDirty();
+}
+
+function updateHeaderFromFirstRow() {
+  const bulanTahun = getFirstRowMonthMalay();
+  if (!bulanTahun) return;
+
+  const text = `BAGI BULAN : ${bulanTahun.toUpperCase()}`;
+
+  const t1 = document.getElementById("tajukBulan");
+  const t2 = document.getElementById("tajukBulan2");
+  const t3 = document.getElementById("tajukBulan3");
+
+  if (t1) t1.textContent = text;
+  if (t2) t2.textContent = text;
+  if (t3) t3.textContent = text;
+}
+
+function createRowAction(idx){
+  const wrap = document.getElementById("tableWrap");
+  const actionDiv = document.createElement("div");
+  actionDiv.className = "row-action";
+  actionDiv.dataset.index = idx;
+  actionDiv.innerHTML = `
+    <button class="edit" onclick="openEditMode(${idx})">✏️</button>
+    <button class="copy" onclick="copyRow(${idx})">📄</button>
+    <button class="delete" onclick="deleteRow(${idx})">🗑️</button>
+  `;
+  wrap.appendChild(actionDiv);
+}
+
+function updateRow(idx,t,h,RD,RH,OD,OH,tot,A_s,A_m,B_s,B_m,C_s,C_m,ket){
+  let row=document.querySelectorAll("#bodyData tr")[idx];
+  let cell=row.children;
+
+  cell[1].textContent=h;
+  cell[2].textContent=t ? new Date(t).toLocaleDateString('en-GB') : "";
+  cell[3].textContent=RD;
+  cell[4].textContent=RH;
+  cell[5].textContent=OD;
+  cell[6].textContent=OH;
+  cell[7].textContent=tot;
+  cell[8].textContent=A_s;
+  cell[9].textContent=A_m;
+  cell[10].textContent=B_s;
+  cell[11].textContent=B_m;
+  cell[12].textContent=C_s;
+  cell[13].textContent=C_m;
+  cell[14].textContent=ket;
+
+  updateRowActionPositions();
+  updateHeaderFromFirstRow();
+  updateTotals();
+  markDirty();
+}
+
+function deleteRow(idx){
+  let rows=document.querySelectorAll("#bodyData tr");
+  let actions=document.querySelectorAll(".row-action");
+
+  if(rows[idx]) rows[idx].remove();
+  if(actions[idx]) actions[idx].remove();
+
+  reorderTable();
+  updateRowActionPositions();
+  updateTotals();
+  markDirty();
+}
+
+function copyRow(idx){
+  const rows = document.querySelectorAll("#bodyData tr");
+  if(!rows[idx]) return;
+
+  let cell = rows[idx].children;
+
+  let h   = cell[1].textContent;
+  let t   = cell[2].textContent;
+  let RasD= cell[3].textContent;
+  let RasH= cell[4].textContent;
+  let OTD = cell[5].textContent;
+  let OTH = cell[6].textContent;
+  let tot = cell[7].textContent;
+
+  let A_s = cell[8].textContent;
+  let A_m = cell[9].textContent;
+  let B_s = cell[10].textContent;
+  let B_m = cell[11].textContent;
+  let C_s = cell[12].textContent;
+  let C_m = cell[13].textContent;
+
+  let ket = cell[14].textContent;
+
+  let isoDate = "";
+  if (t) {
+    let [dd,mm,yy] = t.split("/");
+    isoDate = `${yy}-${mm}-${dd}`;
+  }
+
+  addNewRow(
+    isoDate, h,
+    RasD, RasH,
+    OTD, OTH,
+    tot,
+    A_s, A_m,
+    B_s, B_m,
+    C_s, C_m,
+    ket
+  );
+}
+
+function getFirstRowDate() {
+  const firstRow = document.querySelector("#bodyData tr");
+  if (!firstRow) return null;
+  const tarikh = firstRow.children[2].textContent.trim();
+  return tarikh;
+}
+
+function getFirstRowDateISO() {
+  const tarikh = getFirstRowDate();
+  if (!tarikh) return null;
+
+  const [dd, mm, yy] = tarikh.split("/");
+  return `${yy}-${mm}-${dd}`;
+}
+
+function getFirstRowMonthMalay() {
+  const iso = getFirstRowDateISO();
+  if (!iso) return null;
+
+  const d = new Date(iso);
+  if (isNaN(d)) return null;
+  return d.toLocaleDateString("ms-MY", { month: "long", year: "numeric" });
+}
+
+function reorderTable(){
+  let rows=document.querySelectorAll("#bodyData tr");
+  let actions=document.querySelectorAll(".row-action");
+
+  rowCount=rows.length;
+
+  rows.forEach((r,i)=>{
+    r.children[0].textContent=i+1;
+  });
+
+  actions.forEach((a,i)=>{
+    a.dataset.index = i;
+    a.querySelector(".edit").setAttribute("onclick",`openEditMode(${i})`);
+    a.querySelector(".copy").setAttribute("onclick",`copyRow(${i})`);
+    a.querySelector(".delete").setAttribute("onclick",`deleteRow(${i})`);
+  });
+}
+
+function updateRowActionPositions(){
+  const rows = document.querySelectorAll("#bodyData tr");
+  const actions = document.querySelectorAll(".row-action");
+  const wrapEl = document.getElementById("tableWrap");
+  if (!wrapEl) return;
+  const wrapRect = wrapEl.getBoundingClientRect();
+
+  rows.forEach((row, i) => {
+    if(!actions[i]) return;
+    const action = actions[i];
+    const rowRect = row.getBoundingClientRect();
+    const offsetTop = rowRect.top - wrapRect.top + rowRect.height/2;
+    action.style.top = offsetTop + "px";
+  });
+}
+
+// Kira JUMLAH di footer
+function updateTotals(){
+  let rows = document.querySelectorAll("#bodyData tr");
+
+  let totalJam = 0;
+  let A_s = 0, A_m = 0;
+  let B_s = 0, B_m = 0;
+  let C_s = 0, C_m = 0;
+
+  rows.forEach(r=>{
+    let c = r.children;
+
+    totalJam += parseFloat(c[7].textContent || 0) || 0;
+
+    A_s += parseFloat(c[8].textContent || 0) || 0;
+    A_m += parseFloat(c[9].textContent || 0) || 0;
+
+    B_s += parseFloat(c[10].textContent || 0) || 0;
+    B_m += parseFloat(c[11].textContent || 0) || 0;
+
+    C_s += parseFloat(c[12].textContent || 0) || 0;
+    C_m += parseFloat(c[13].textContent || 0) || 0;
+  });
+
+  document.getElementById("totJam").textContent  = rows.length ? totalJam.toFixed(2) : "";
+  document.getElementById("totA_s").textContent  = rows.length ? A_s.toFixed(2)      : "";
+  document.getElementById("totA_m").textContent  = rows.length ? A_m.toFixed(2)      : "";
+  document.getElementById("totB_s").textContent  = rows.length ? B_s.toFixed(2)      : "";
+  document.getElementById("totB_m").textContent  = rows.length ? B_m.toFixed(2)      : "";
+  document.getElementById("totC_s").textContent  = rows.length ? C_s.toFixed(2)      : "";
+  document.getElementById("totC_m").textContent  = rows.length ? C_m.toFixed(2)      : "";
+
+  // Kemaskini slip elaun (Seksyen 2)
+  updateSlip(totalJam, A_s, A_m, B_s, B_m, C_s, C_m);
+}
+
+// update posisi bila resize window
+window.addEventListener("resize", updateRowActionPositions);
+
+/* ========= UTIL KIRAAN SLIP ELAUN ========= */
+
+function parseCurrency(str){
+  if(!str) return 0;
+  let s = String(str).replace(/[^\d.,-]/g,"");
+  s = s.replace(/,/g,"");
+  let n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+
+function formatRM(num){
+  let n = parseFloat(num);
+  if(isNaN(n)) n = 0;
+  return "RM" + n.toFixed(2);
+}
+
+function hoursToJamMinit(h){
+  let n = parseFloat(h);
+  if(!isFinite(n) || n <= 0) return "0 Jam 0 Minit";
+  let totalMin = Math.round(n * 60);
+  let jam = Math.floor(totalMin / 60);
+  let min = totalMin % 60;
+  return `${jam} Jam ${min} Minit`;
+}
+
+function updateSlip(totalJam, A_s, A_m, B_s, B_m, C_s, C_m){
+  // Gaji asas dari info-table
+  const gajiText = document.getElementById("infoGajiAsas")?.textContent || "0";
+  const gajiAsas = parseCurrency(gajiText);
+
+  // Papar gaji di semua sel yang guna kelas slipGajiAsas
+  document.querySelectorAll(".slipGajiAsas").forEach(el=>{
+    el.textContent = gajiAsas ? formatRM(gajiAsas) : "-";
+  });
+
+  // Jika tiada gaji atau tiada jam langsung, kosongkan nilai & keluar
+  const hasAnyHours = (totalJam || A_s || A_m || B_s || B_m || C_s || C_m) > 0;
+
+  // Asas kadar sejam
+  let baseRate = 0;
+  if (gajiAsas && hasAnyHours) {
+    baseRate = (gajiAsas * 12) / (313 * 8); // formula asas
+  }
+
+  // Faktor gandaan
+  const fA_s = 1 + 1/8;   // 1 1/8
+  const fA_m = 1 + 1/4;   // 1 1/4
+  const fB_s = 1 + 1/4;   // 1 1/4
+  const fB_m = 1 + 1/2;   // 1 1/2
+  const fC_s = 1 + 3/4;   // 1 3/4
+  const fC_m = 2;         // 2
+
+  // Kadar sejam
+  const rA_s = baseRate * fA_s;
+  const rA_m = baseRate * fA_m;
+  const rB_s = baseRate * fB_s;
+  const rB_m = baseRate * fB_m;
+  const rC_s = baseRate * fC_s;
+  const rC_m = baseRate * fC_m;
+
+  document.getElementById("rate_A_s").textContent = formatRM(rA_s);
+  document.getElementById("rate_A_m").textContent = formatRM(rA_m);
+  document.getElementById("rate_B_s").textContent = formatRM(rB_s);
+  document.getElementById("rate_B_m").textContent = formatRM(rB_m);
+  document.getElementById("rate_C_s").textContent = formatRM(rC_s);
+  document.getElementById("rate_C_m").textContent = formatRM(rC_m);
+
+  // Jumlah jam (teks Jam/Minit)
+  document.getElementById("jam_A_s").textContent = hoursToJamMinit(A_s);
+  document.getElementById("jam_A_m").textContent = hoursToJamMinit(A_m);
+  document.getElementById("jam_B_s").textContent = hoursToJamMinit(B_s);
+  document.getElementById("jam_B_m").textContent = hoursToJamMinit(B_m);
+  document.getElementById("jam_C_s").textContent = hoursToJamMinit(C_s);
+  document.getElementById("jam_C_m").textContent = hoursToJamMinit(C_m);
+
+  // Jumlah RM per kategori
+  const amtA_s = rA_s * (A_s || 0);
+  const amtA_m = rA_m * (A_m || 0);
+  const amtB_s = rB_s * (B_s || 0);
+  const amtB_m = rB_m * (B_m || 0);
+  const amtC_s = rC_s * (C_s || 0);
+  const amtC_m = rC_m * (C_m || 0);
+
+  document.getElementById("amt_A_s").textContent = formatRM(amtA_s);
+  document.getElementById("amt_A_m").textContent = formatRM(amtA_m);
+  document.getElementById("amt_B_s").textContent = formatRM(amtB_s);
+  document.getElementById("amt_B_m").textContent = formatRM(amtB_m);
+  document.getElementById("amt_C_s").textContent = formatRM(amtC_s);
+  document.getElementById("amt_C_m").textContent = formatRM(amtC_m);
+
+  // Ringkasan bawah slip
+  document.getElementById("slipGaji").textContent = formatRM(gajiAsas);
+  document.getElementById("slipSatuPertiga").textContent = formatRM(gajiAsas / 3);
+  document.getElementById("slipDuaPertiga").textContent  = formatRM(gajiAsas * 2 / 3);
+
+  const jumlahSemua = amtA_s + amtA_m + amtB_s + amtB_m + amtC_s + amtC_m;
+  document.getElementById("slipJumlahSemua").textContent = formatRM(jumlahSemua);
+}
+
+/* ========= TARIKH PENJANAAN ========= */
+(function(){
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2,'0');
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const yyyy = today.getFullYear();
+
+  const formatted = `${dd}/${mm}/${yyyy}`;
+  document.getElementById("tarikhPenjanaan").textContent =
+    `Tarikh Penjanaan : ${formatted}`;
+})();
+
+/* ========= LOAD PROFILE & OT DATA DARI SERVER ========= */
+
+async function loadOTFromServer() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    clearAuth();
+    redirectToLogin();
+    return;
+  }
+
+  if (!noRujukanOT) {
+    alert("No rujukan KLM tidak ditemui dalam URL.");
+    window.location.href = "ot-list.html";
+    return;
+  }
+
+  document.getElementById("topBar-rujukan").textContent = noRujukanOT;
+  document.getElementById("infoNoRujukan").textContent = noRujukanOT;
+
+  const body = new URLSearchParams();
+  body.append("action", "getOTDetail");
+  body.append("token", token);
+  body.append("noRujukanOT", noRujukanOT);
+
+  try {
+    const res = await fetch(WEB_APP_URL, { method: "POST", body });
+    const data = await res.json();
+
+    if (!data.success) {
+      alert(data.message || "Gagal memuat data OT.");
+      if (data.message && data.message.includes("Token")) {
+        clearAuth();
+        redirectToLogin();
+      }
+      return;
+    }
+
+    const profile = data.profile || {};
+    const ot = data.otData || null;
+
+    // Isi info-table guna profile
+    document.getElementById("infoNoKp").textContent           = profile.noKp            || "-";
+    document.getElementById("infoGajiAsas").textContent       = profile.gajiAsas        || "-";
+    document.getElementById("infoNama").textContent           = profile.namaPenuh       || "-";
+    document.getElementById("infoNoGaji").textContent         = profile.noGaji          || "-";
+    document.getElementById("infoUnitOrganisasi").textContent = profile.unitOrganisasi  || "-";
+    document.getElementById("infoJawatan").textContent        = profile.jawatan         || "-";
+    document.getElementById("infoBank").textContent           = profile.bank            || "-";
+    document.getElementById("infoGredGaji").textContent       = profile.gredGaji        || "-";
+    document.getElementById("infoNoAkaun").textContent        = profile.noAkaun         || "-";
+    document.getElementById("infoStatusLantikan").textContent = profile.statusLantikan  || "-";
+    document.getElementById("infoJenisWaktuKerja").textContent= profile.jenisWaktuKerja || "-";
+    document.getElementById("infoTanggungKerja").textContent  = profile.tanggungKerja   || "-";
+    document.getElementById("infoNoTelefon").textContent      = profile.noTelefon       || "-";
+    document.getElementById("infoEmel").textContent           = profile.emel            || "-";
+
+    // Nama pada perakuan (Seksyen 3)
+    const perakuanNamaEl = document.getElementById("perakuanNama");
+    if (perakuanNamaEl) {
+      perakuanNamaEl.textContent = profile.namaPenuh || "................................";
+    }
+
+    // Kalau ada data OT dari Sheet2, populate baris
+    if (ot && ot.tarikh && ot.tarikh.length) {
+      for (let i = 0; i < ot.tarikh.length; i++) {
+        const tISO = ot.tarikh[i] || "";
+        const h    = ot.hari ? (ot.hari[i] || "") : "";
+        const RasD = ot.waktuRasmiDari ? (ot.waktuRasmiDari[i] || "") : "";
+        const RasH = ot.waktuRasmiHingga ? (ot.waktuRasmiHingga[i] || "") : "";
+        const OTD  = ot.waktuOTDari ? (ot.waktuOTDari[i] || "") : "";
+        const OTH  = ot.waktuOTHingga ? (ot.waktuOTHingga[i] || "") : "";
+        const tot  = ot.jumlahJam ? (ot.jumlahJam[i] || "") : "";
+
+        const A_s  = ot.BiasaSiang ? (ot.BiasaSiang[i] || "") : "";
+        const A_m  = ot.BiasaMalam ? (ot.BiasaMalam[i] || "") : "";
+        const B_s  = ot.rehatSiang ? (ot.rehatSiang[i] || "") : "";
+        const B_m  = ot.rehatMalam ? (ot.rehatMalam[i] || "") : "";
+        const C_s  = ot.kelepasanSiang ? (ot.kelepasanSiang[i] || "") : "";
+        const C_m  = ot.kelepasanMalam ? (ot.kelepasanMalam[i] || "") : "";
+        const ket  = ot.keterangan ? (ot.keterangan[i] || "") : "";
+
+        addNewRow(
+          tISO,
+          h,
+          RasD,
+          RasH,
+          OTD,
+          OTH,
+          tot,
+          A_s,
+          A_m,
+          B_s,
+          B_m,
+          C_s,
+          C_m,
+          ket
+        );
+      }
+      // Data yang baru load dianggap "saved"
+      isDirty = false;
+    } else {
+      updateHeaderFromFirstRow();
+      updateTotals();
+      isDirty = false;
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Ralat sambungan semasa memuat data KLM.");
+  }
+
+  // Pastikan posisi icon selari baris
+  updateRowActionPositions();
+}
+
+/* ========= SIMPAN KE SHEET2 ========= */
+
+async function saveOTToServer() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    clearAuth();
+    redirectToLogin();
+    return;
+  }
+  if (!noRujukanOT) {
+    alert("No rujukan KLM tidak sah.");
+    return;
+  }
+
+  const rows = document.querySelectorAll("#bodyData tr");
+  if (!rows.length) {
+    if (!confirm("Tiada rekod dalam jadual. Simpan sebagai kosong?")) return;
+  }
+
+  const bil            = [];
+  const hari           = [];
+  const tarikh         = [];
+  const waktuRasmiDari = [];
+  const waktuRasmiHingga = [];
+  const waktuOTDari    = [];
+  const waktuOTHingga  = [];
+  const jumlahJam      = [];
+  const BiasaSiang     = [];
+  const BiasaMalam     = [];
+  const rehatSiang     = [];
+  const rehatMalam     = [];
+  const kelepasanSiang = [];
+  const kelepasanMalam = [];
+  const keterangan     = [];
+
+  rows.forEach((r, idx) => {
+    const c = r.children;
+    bil.push(String(idx + 1));
+    hari.push(c[1].textContent || "");
+
+    const tDisplay = c[2].textContent || "";
+    if (tDisplay) {
+      const [dd, mm, yy] = tDisplay.split("/");
+      tarikh.push(`${yy}-${mm}-${dd}`);
+    } else {
+      tarikh.push("");
+    }
+
+    waktuRasmiDari.push(c[3].textContent || "");
+    waktuRasmiHingga.push(c[4].textContent || "");
+    waktuOTDari.push(c[5].textContent || "");
+    waktuOTHingga.push(c[6].textContent || "");
+    jumlahJam.push(c[7].textContent || "");
+    BiasaSiang.push(c[8].textContent || "");
+    BiasaMalam.push(c[9].textContent || "");
+    rehatSiang.push(c[10].textContent || "");
+    rehatMalam.push(c[11].textContent || "");
+    kelepasanSiang.push(c[12].textContent || "");
+    kelepasanMalam.push(c[13].textContent || "");
+    keterangan.push(c[14].textContent || "");
+  });
+
+  const body = new URLSearchParams();
+  body.append("action", "saveOTDetail");
+  body.append("token", token);
+  body.append("noRujukanOT", noRujukanOT);
+
+  body.append("bil",            JSON.stringify(bil));
+  body.append("hari",           JSON.stringify(hari));
+  body.append("tarikh",         JSON.stringify(tarikh));
+  body.append("waktuRasmiDari", JSON.stringify(waktuRasmiDari));
+  body.append("waktuRasmiHingga", JSON.stringify(waktuRasmiHingga));
+  body.append("waktuOTDari",    JSON.stringify(waktuOTDari));
+  body.append("waktuOTHingga",  JSON.stringify(waktuOTHingga));
+  body.append("jumlahJam",      JSON.stringify(jumlahJam));
+  body.append("BiasaSiang",     JSON.stringify(BiasaSiang));
+  body.append("BiasaMalam",     JSON.stringify(BiasaMalam));
+  body.append("rehatSiang",     JSON.stringify(rehatSiang));
+  body.append("rehatMalam",     JSON.stringify(rehatMalam));
+  body.append("kelepasanSiang", JSON.stringify(kelepasanSiang));
+  body.append("kelepasanMalam", JSON.stringify(kelepasanMalam));
+  body.append("keterangan",     JSON.stringify(keterangan));
+
+  try {
+    const res = await fetch(WEB_APP_URL, { method: "POST", body });
+    const data = await res.json();
+    if (!data.success) {
+      alert(data.message || "Gagal menyimpan borang OT.");
+      return;
+    }
+    alert("Borang KLM berjaya disimpan.");
+    isDirty = false;
+  } catch (err) {
+    console.error(err);
+    alert("Ralat sambungan semasa menyimpan.");
+  }
+}
+
+/* ========= TOP BAR BUTTONS ========= */
+
+document.getElementById("btnSave").addEventListener("click", () => {
+  saveOTToServer();
+});
+
+document.getElementById("btnBack").addEventListener("click", () => {
+  if (isDirty) {
+    const ok = confirm("Data anda belum disimpan, akan hilang.\nTeruskan?");
+    if (!ok) return;
+  }
+  window.location.href = "ot-list.html";
+});
+
+/* ========= INIT ========= */
+
+window.addEventListener("load", () => {
+  loadOTFromServer();
+});
+</script>
+</body>
+</html>

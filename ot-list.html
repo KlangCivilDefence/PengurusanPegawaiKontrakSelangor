@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Senarai Permohonan KLM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #0b1020;
+      --accent: #2563eb;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #1d4ed8 0, rgba(15,23,42,0.3) 40%, #020617 100%),
+        radial-gradient(circle at bottom, #0f172a 0, #020617 55%);
+      color: var(--text-main);
+    }
+    .nav {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15,23,42,0.9);
+      border-bottom: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 12px 25px rgba(15,23,42,0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+    }
+    .nav-left { display: flex; align-items: center; gap: 8px; }
+    .nav-logo {
+      width: 32px; height: 32px; border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #60a5fa, #2563eb 35%, #020617 100%);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 14px rgba(59,130,246,0.7);
+      font-size: 16px; font-weight: 800;
+    }
+    .nav-title-main {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #bfdbfe;
+    }
+    .nav-title-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .nav-right { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .nav-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.85);
+      color: #e5e7eb;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover {
+      background: rgba(30,64,175,0.85);
+      box-shadow: 0 0 14px rgba(37,99,235,0.9);
+    }
+
+    main {
+      max-width: 720px;
+      margin: 18px auto;
+      padding: 0 14px 24px;
+    }
+    .card {
+      padding: 18px 16px 16px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,0.3), transparent 55%),
+        rgba(15,23,42,0.98);
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow: 0 20px 40px rgba(15,23,42,0.95);
+    }
+    .card-title { font-size: 18px; margin-bottom: 4px; }
+    .card-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .status { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
+    .status.error { color: #f97373; }
+
+    .ref-list { display: flex; flex-direction: column; gap: 8px; }
+    .ref-item-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 999px;
+      padding: 8px 12px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.95);
+      color: #e5e7eb;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ref-code { font-weight: 600; color: #bfdbfe; }
+    .ref-arrow { font-size: 14px; color: var(--text-muted); }
+
+    .btn-primary {
+      background: #2563eb;
+      border-color: rgba(59,130,246,0.9);
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 0 14px rgba(37,99,235,0.9);
+    }
+  </style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-left">
+    <img class="nax-logo"  src="LogoApmKlang.png" alt="Logo APM Klang" width="40">
+    <div>
+      <div class="nav-title-main">PENGURUSAN PEGAWAI KONTRAK APM SELANGOR</div>
+      <div class="nav-title-sub">Senarai Permohonan Kerja lebih Masa</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-btn">Dashboard</a>
+    <!--<a href="profile.html" class="nav-btn">Profil</a>
+    <a href="change-password.html" class="nav-btn">Tukar Password</a>-->
+    <button class="nav-btn" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="card-header-row">
+      <div>
+        <h1 class="card-title">Permohonan Kerja Lebih Masa</h1>
+        <p class="card-subtitle">
+          Senarai nombor rujukan kerja lebih masa.
+        </p>
+      </div>
+      <button class="nav-btn btn-primary" id="btnNew">
+        + Permohonan Baharu
+      </button>
+    </div>
+
+    <p id="status" class="status">Memuat senarai...</p>
+
+    <div id="refList" class="ref-list"></div>
+  </section>
+</main>
+
+<script>
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4Gsy9l0Uw8cX2pBBXECoWySZcRCT60Sq4rxfQYXyLUVlMLfqKVMlqWq1fOc6MhWTG/exec";
+
+  const statusEl  = document.getElementById("status");
+  const refListEl = document.getElementById("refList");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const btnNew    = document.getElementById("btnNew");
+
+  function clearAuth() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("authUser");
+  }
+
+  function redirectToLogin() {
+    window.location.href = "login.html";
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    clearAuth();
+    redirectToLogin();
+  });
+
+  function openBorang(ref) {
+    const url = "borang-ot.html?ref=" + encodeURIComponent(ref);
+    window.location.href = url;
+  }
+
+  async function loadOTRefs() {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      clearAuth();
+      redirectToLogin();
+      return;
+    }
+
+    statusEl.textContent = "Memuat senarai permohonan KLM...";
+    statusEl.className = "status";
+    refListEl.innerHTML = "";
+
+    const body = new URLSearchParams();
+    body.append("action", "getOTList");
+    body.append("token", token);
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: body
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        statusEl.textContent = data.message || "Gagal memuat senarai.";
+        statusEl.className = "status error";
+        if (data.message && data.message.includes("Token")) {
+          clearAuth();
+          setTimeout(redirectToLogin, 800);
+        }
+        return;
+      }
+
+      const list = data.noRujukan || [];
+      if (!list.length) {
+        statusEl.textContent = "Tiada permohonan KLM direkodkan untuk akaun ini.";
+        statusEl.className = "status";
+        return;
+      }
+
+      statusEl.textContent = `Jumpa ${list.length} permohonan KLM. Klik untuk buka borang.`;
+      statusEl.className = "status";
+
+      refListEl.innerHTML = list.map(ref => `
+        <button class="ref-item-btn" onclick="openBorang('${ref.replace(/'/g,"\\'")}')">
+          <span class="ref-code">${ref}</span>
+          <span class="ref-arrow">Buka borang →</span>
+        </button>
+      `).join("");
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "Ralat sambungan semasa memuat senarai KLM.";
+      statusEl.className = "status error";
+    }
+  }
+
+  // BUTANG PERMOHONAN BAHARU
+  btnNew.addEventListener("click", async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      clearAuth();
+      redirectToLogin();
+      return;
+    }
+
+    const ok = confirm("Buat permohonan KLM baharu?");
+    if (!ok) return;
+
+    const body = new URLSearchParams();
+    body.append("action", "createNewOT");
+    body.append("token", token);
+
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: body
+      });
+      const data = await res.json();
+
+      if (!data.success) {
+        alert(data.message || "Gagal buat permohonan baharu.");
+        return;
+      }
+
+      const ref = data.noRujukanOT;
+      if (!ref) {
+        alert("No rujukan KLM baharu tidak diterima daripada server.");
+        return;
+      }
+
+      // Terus buka borang OT untuk no rujukan baru
+      openBorang(ref);
+    } catch (err) {
+      console.error(err);
+      alert("Ralat sambungan semasa buat permohonan baharu.");
+    }
+  });
+
+  loadOTRefs();
+</script>
+
+</body>
+</html>

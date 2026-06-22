@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Profil Pengguna</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-main: #020617;
+      --bg-card: #0b1020;
+      --bg-input: #020617;
+      --accent: #2563eb;
+      --accent-soft: #1d4ed8;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --success: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #1d4ed8 0, rgba(15,23,42,0.3) 40%, #020617 100%),
+        radial-gradient(circle at bottom, #0f172a 0, #020617 55%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.85));
+      border-bottom: 1px solid rgba(148,163,184,0.25);
+      box-shadow: 0 12px 25px rgba(15,23,42,0.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 30% 0, #60a5fa, #2563eb 35%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(59,130,246,0.7);
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .nav-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-title-main {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #bfdbfe;
+    }
+
+    .nav-title-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .user-pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148,163,184,0.5);
+      color: #dbeafe;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.8);
+    }
+
+    .nav-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.85);
+      color: #e5e7eb;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      background: rgba(30,64,175,0.85);
+      box-shadow: 0 0 14px rgba(37,99,235,0.9);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    main {
+      flex: 1;
+      padding: 18px 20px 22px;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .card {
+      border-radius: 18px;
+      padding: 18px 18px 14px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,0.3), transparent 55%),
+        rgba(15,23,42,0.98);
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow:
+        0 20px 40px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(15,23,42,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 3px;
+      color: #cbd5f5;
+    }
+
+    input[type="text"] {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background-color: var(--bg-input);
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, transform 0.05s ease;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.4), 0 0 18px rgba(37,99,235,0.4);
+      background-color: #020617;
+      transform: translateY(-1px);
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow:
+        0 10px 25px rgba(37,99,235,0.55),
+        0 0 0 1px rgba(191,219,254,0.1);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow:
+        0 14px 30px rgba(37,99,235,0.75),
+        0 0 0 1px rgba(191,219,254,0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 16px rgba(15,23,42,0.8),
+        0 0 0 1px rgba(191,219,254,0.2);
+    }
+
+    .status {
+      font-size: 13px;
+      min-height: 18px;
+      color: var(--text-muted);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 14px 12px 18px;
+      }
+      .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="nav-left">
+      <img src="LogoApmKlang.png" alt="Logo APM Klang" width="40">
+      <div class="nav-title">
+        <span class="nav-title-main">PENGURUSAN PEGAWAI KONTRAK APM SELANGOR</span>
+        <span class="nav-title-sub">Profil</span>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="user-pill">
+        <span class="user-dot"></span>
+        <span id="userLabel">Memuat...</span>
+      </div>
+      <a href="index.html" class="nav-btn">Dashboard</a>
+      <button class="nav-btn" id="logoutBtn">
+        <span>Logout</span>
+        <span>↩</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="card-inner">
+        <h1 class="card-title">Maklumat Profil</h1>
+        <p class="card-subtitle">
+          Kemaskini maklumat di bawah dan tekan <strong>Simpan Profil</strong>.
+        </p>
+
+        <form id="profileForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="namaPenuh">Nama</label>
+              <input type="text" id="namaPenuh" placeholder="Nama penuh">
+            </div>
+            <div class="form-group">
+              <label for="noKp">No. K/P</label>
+              <input type="text" id="noKp" placeholder="Contoh: 900101-10-1234">
+            </div>
+
+            <div class="form-group">
+              <label for="noGaji">No. Gaji</label>
+              <input type="text" id="noGaji" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="gajiAsas">Gaji Asas</label>
+              <input type="text" id="gajiAsas" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="unitOrganisasi">Unit Organisasi</label>
+              <input type="text" id="unitOrganisasi" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="jawatan">Jawatan</label>
+              <input type="text" id="jawatan" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="bank">Bank</label>
+              <input type="text" id="bank" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="noAkaun">No. Akaun</label>
+              <input type="text" id="noAkaun" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="gredGaji">Gred Gaji</label>
+              <input type="text" id="gredGaji" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="statusLantikan">Status Lantikan</label>
+              <input type="text" id="statusLantikan" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="jenisWaktuKerja">Jenis Waktu Kerja</label>
+              <input type="text" id="jenisWaktuKerja" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="tanggungKerja">Tanggung Kerja</label>
+              <input type="text" id="tanggungKerja" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label for="noTelefon">No. Telefon</label>
+              <input type="text" id="noTelefon" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="emel">Emel</label>
+              <input type="text" id="emel" placeholder="">
+            </div>
+          </div>
+
+          <div class="actions">
+            <p id="status" class="status">Memuat profil...</p>
+            <button type="submit" class="btn-primary">
+              <span>Simpan Profil</span>
+              <span>💾</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4Gsy9l0Uw8cX2pBBXECoWySZcRCT60Sq4rxfQYXyLUVlMLfqKVMlqWq1fOc6MhWTG/exec";
+
+    const userLabel = document.getElementById("userLabel");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const profileForm = document.getElementById("profileForm");
+    const statusEl = document.getElementById("status");
+
+    function redirectToLogin() {
+      window.location.href = "login.html";
+    }
+
+    function clearAuth() {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+    }
+
+    function fillProfileForm(profile) {
+      document.getElementById("namaPenuh").value = profile.namaPenuh || "";
+      document.getElementById("noKp").value = profile.noKp || "";
+      document.getElementById("noGaji").value = profile.noGaji || "";
+      document.getElementById("gajiAsas").value = profile.gajiAsas || "";
+      document.getElementById("unitOrganisasi").value = profile.unitOrganisasi || "";
+      document.getElementById("jawatan").value = profile.jawatan || "";
+      document.getElementById("bank").value = profile.bank || "";
+      document.getElementById("noAkaun").value = profile.noAkaun || "";
+      document.getElementById("gredGaji").value = profile.gredGaji || "";
+      document.getElementById("statusLantikan").value = profile.statusLantikan || "";
+      document.getElementById("jenisWaktuKerja").value = profile.jenisWaktuKerja || "";
+      document.getElementById("tanggungKerja").value = profile.tanggungKerja || "";
+      document.getElementById("noTelefon").value = profile.noTelefon || "";
+      document.getElementById("emel").value = profile.emel || "";
+    }
+
+    async function loadProfile() {
+      const token = localStorage.getItem("authToken");
+      const username = localStorage.getItem("authUser");
+
+      if (!token) {
+        clearAuth();
+        redirectToLogin();
+        return;
+      }
+
+      userLabel.textContent = username || "Pengguna";
+
+      statusEl.textContent = "Memuat profil...";
+      statusEl.className = "status";
+
+      const body = new URLSearchParams();
+      body.append("action", "getProfile");
+      body.append("token", token);
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: body
+        });
+        const data = await res.json();
+
+        if (data.success && data.profile) {
+          fillProfileForm(data.profile);
+          statusEl.textContent = "Profil dimuat.";
+          statusEl.className = "status";
+        } else {
+          statusEl.textContent = data.message || "Tidak dapat memuat profil.";
+          statusEl.className = "status error";
+          if (data.message && data.message.includes("Token")) {
+            clearAuth();
+            setTimeout(redirectToLogin, 1000);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Ralat sambungan semasa muat profil.";
+        statusEl.className = "status error";
+      }
+    }
+
+    profileForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        clearAuth();
+        redirectToLogin();
+        return;
+      }
+
+      const body = new URLSearchParams();
+      body.append("action", "saveProfile");
+      body.append("token", token);
+      body.append("namaPenuh", document.getElementById("namaPenuh").value.trim());
+      body.append("noKp", document.getElementById("noKp").value.trim());
+      body.append("noGaji", document.getElementById("noGaji").value.trim());
+      body.append("gajiAsas", document.getElementById("gajiAsas").value.trim());
+      body.append("unitOrganisasi", document.getElementById("unitOrganisasi").value.trim());
+      body.append("jawatan", document.getElementById("jawatan").value.trim());
+      body.append("bank", document.getElementById("bank").value.trim());
+      body.append("noAkaun", document.getElementById("noAkaun").value.trim());
+      body.append("gredGaji", document.getElementById("gredGaji").value.trim());
+      body.append("statusLantikan", document.getElementById("statusLantikan").value.trim());
+      body.append("jenisWaktuKerja", document.getElementById("jenisWaktuKerja").value.trim());
+      body.append("tanggungKerja", document.getElementById("tanggungKerja").value.trim());
+      body.append("noTelefon", document.getElementById("noTelefon").value.trim());
+      body.append("emel", document.getElementById("emel").value.trim());
+
+      statusEl.textContent = "Menyimpan...";
+      statusEl.className = "status";
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: body
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          statusEl.textContent = data.message || "Profil berjaya disimpan.";
+          statusEl.className = "status success";
+        } else {
+          statusEl.textContent = data.message || "Gagal menyimpan profil.";
+          statusEl.className = "status error";
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Ralat sambungan semasa simpan profil.";
+        statusEl.className = "status error";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      clearAuth();
+      redirectToLogin();
+    });
+
+    loadProfile();
+  </script>
+
+</body>
+</html>
