@@ -368,6 +368,15 @@
             </div>
 
             <div class="form-group">
+              <label for="daerah">Daerah</label>
+              <input type="text" id="daerah" placeholder="Contoh: Klang">
+            </div>
+            <div class="form-group">
+              <label for="negeri">Negeri</label>
+              <input type="text" id="negeri" placeholder="Contoh: Selangor">
+            </div>
+
+            <div class="form-group">
               <label for="noTelefon">No. Telefon</label>
               <input type="text" id="noTelefon" placeholder="">
             </div>
@@ -419,6 +428,8 @@
       document.getElementById("statusLantikan").value = profile.statusLantikan || "";
       document.getElementById("jenisWaktuKerja").value = profile.jenisWaktuKerja || "";
       document.getElementById("tanggungKerja").value = profile.tanggungKerja || "";
+      document.getElementById("daerah").value = profile.daerah || "";
+      document.getElementById("negeri").value = profile.negeri || "";
       document.getElementById("noTelefon").value = profile.noTelefon || "";
       document.getElementById("emel").value = profile.emel || "";
     }
@@ -493,6 +504,8 @@
       body.append("statusLantikan", document.getElementById("statusLantikan").value.trim());
       body.append("jenisWaktuKerja", document.getElementById("jenisWaktuKerja").value.trim());
       body.append("tanggungKerja", document.getElementById("tanggungKerja").value.trim());
+      body.append("daerah", document.getElementById("daerah").value.trim());
+      body.append("negeri", document.getElementById("negeri").value.trim());
       body.append("noTelefon", document.getElementById("noTelefon").value.trim());
       body.append("emel", document.getElementById("emel").value.trim());
 
