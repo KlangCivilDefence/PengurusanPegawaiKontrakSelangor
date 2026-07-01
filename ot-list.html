@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
@@ -77,9 +77,20 @@
     }
 
     main {
-      max-width: 720px;
+      max-width: 1180px;
       margin: 18px auto;
       padding: 0 14px 24px;
+    }
+
+    .page-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .request-section {
+      min-width: 0;
     }
     .card {
       padding: 18px 16px 16px;
@@ -130,6 +141,83 @@
       background: #1d4ed8;
       box-shadow: 0 0 14px rgba(37,99,235,0.9);
     }
+
+    .document-section {
+      margin-top: 0;
+      position: sticky;
+      top: 76px;
+    }
+
+    .document-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .document-box {
+      min-height: 130px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(96,165,250,0.65);
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,0.32), transparent 55%),
+        rgba(15,23,42,0.95);
+      color: var(--text-main);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .document-box:hover {
+      transform: translateY(-3px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 28px rgba(37,99,235,0.32);
+    }
+
+    .document-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37,99,235,0.25);
+      border: 1px solid rgba(96,165,250,0.55);
+      font-size: 22px;
+    }
+
+    .document-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #dbeafe;
+      margin-bottom: 5px;
+    }
+
+    .document-desc {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .document-open {
+      font-size: 12px;
+      font-weight: 600;
+      color: #93c5fd;
+    }
+
+    @media (max-width: 900px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .document-section {
+        position: static;
+      }
+    }
   </style>
 </head>
 <body>
@@ -151,7 +239,8 @@
 </header>
 
 <main>
-  <section class="card">
+  <div class="page-layout">
+  <section class="card request-section">
     <div class="card-header-row">
       <div>
         <h1 class="card-title">Permohonan Kerja Lebih Masa</h1>
@@ -168,6 +257,33 @@
 
     <div id="refList" class="ref-list"></div>
   </section>
+
+  <section class="card document-section">
+    <h2 class="card-title">Dokumen Tuntutan</h2>
+    <p class="card-subtitle">Klik kotak di bawah untuk membuka, mengisi dan mencetak dokumen A4.</p>
+
+    <div class="document-grid">
+      <a class="document-box" href="B2-ELM-003_A4.html" target="_blank" rel="noopener">
+        <div>
+          <div class="document-icon">✓</div>
+          <div class="document-name">Senarai Semak Tuntutan ELM</div>
+          <div class="document-desc">Borang B2-ELM-003 untuk semakan dokumen tuntutan elaun lebih masa.</div>
+        </div>
+        <div class="document-open">Buka dokumen →</div>
+      </a>
+
+      <a class="document-box" href="Borang_Perakuan_Tuntutan_A4.html" target="_blank" rel="noopener">
+        <div>
+          <div class="document-icon">✎</div>
+          <div class="document-name">Borang Perakuan Tuntutan</div>
+          <div class="document-desc">Borang perakuan tuntutan yang boleh diisi dan dicetak dalam saiz A4.</div>
+        </div>
+        <div class="document-open">Buka dokumen →</div>
+      </a>
+    </div>
+  </section>
+  </div>
+
 </main>
 
 <script>
